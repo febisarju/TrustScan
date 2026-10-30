@@ -1,4 +1,4 @@
-# TrustScan — terminal-based ML demonstration
+# TrustScan
 
 TrustScan is a research prototype for screening job postings for possible fraud. It combines text features, metadata, scam-cue features, and a trained model to produce a risk score and a `Publish`, `Review`, or `Hold` triage decision.
 
