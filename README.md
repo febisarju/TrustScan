@@ -1,4 +1,4 @@
-# TrustScan
+# TrustScan - Fake Job Posting Detection
 
 TrustScan is a machine learning system for detecting potentially fraudulent job postings. It analyzes job-posting text, metadata, and scam-related cues to estimate fraud risk.
 
