@@ -1,117 +1,83 @@
 # TrustScan
 
-TrustScan is a research prototype for screening job postings for possible fraud. It combines text features, metadata, scam-cue features, and a trained model to produce a risk score and a `Publish`, `Review`, or `Hold` triage decision.
+TrustScan is a machine learning system for detecting potentially fraudulent job postings. It analyzes job-posting text, metadata, and scam-related cues to estimate fraud risk.
 
-**The model's output is a risk estimate, not proof that a job is real or fake. A human should verify the employer and posting independently.**
+## Features
 
-## 1. Project files
+- TF-IDF based text analysis
+- Metadata and scam-cue features
+- Logistic Regression, SVM, Random Forest and XGBoost models
+- Stacked TrustScan model
+- Group-aware evaluation
+- Keyword-shift robustness testing
+- Conformal-style triage: **Publish, Review, Hold**
+- Prediction explanations
 
-- `demo.py` — recommended terminal interface for a live demonstration.
-- `train.py` — trains and saves `trustscan_model.joblib`.
-- `predict.py` — reusable prediction functions and CSV prediction CLI.
-- `preprocessing/` — dataset loading and validation.
-- `features/` — text, metadata, and scam-cue features.
-- `models/` — classifier implementations.
-- `evaluation/`, `robustness/`, `conformal/`, `explainability/` — evaluation, stress tests, triage, and explanation logic.
-- `sample_new_postings.csv` — example prediction input; it is **not** the training dataset.
-- `app.py` — optional Streamlit interface; it is not needed for the terminal demo.
-
-## 2. Set up in VS Code (Windows)
-
-1. Extract the ZIP.
-2. In VS Code, choose **File → Open Folder** and open the extracted `ML` folder.
-3. Open **Terminal → New Terminal**. Make sure the terminal is in the folder containing `demo.py` and `train.py`.
-4. Create a virtual environment:
-
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-   If PowerShell blocks activation, use Command Prompt in VS Code and run:
-
-   ```bat
-   .venv\Scripts\activate.bat
-   ```
-
-5. Install the required packages:
-
-   ```bash
-   python -m pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
-
-## 3. Put the training dataset in the project folder
-
-The training command expects the EMSCAD / Fake Job Postings dataset, normally with a target column named `fraudulent`. Save or copy the CSV into the `ML` folder. For example, if its actual filename is `fake_job_postings.csv`, the path should be:
+## Project Structure
 
 ```text
-ML/
-  fake_job_postings.csv
-  train.py
-  demo.py
+TrustScan/
+├── preprocessing/
+├── features/
+├── models/
+├── evaluation/
+├── robustness/
+├── conformal/
+├── explainability/
+├── tests/
+├── dataset/
+├── train.py
+├── predict.py
+├── demo.py
+├── run_all.py
+├── trustscan_model.joblib
+└── requirements.txt
 ```
 
-The ZIP does **not** include the full training dataset or a trained model file. Do not rename `sample_new_postings.csv` to pretend it is the training dataset; it contains input examples, not the labelled training set.
+## Installation
 
-## 4. Train the model (first run only)
+```bash
+pip install -r requirements.txt
+```
 
-From the `ML` folder, run:
+## Train the Model
 
 ```bash
 python train.py --data fake_job_postings.csv --output trustscan_model.joblib
 ```
 
-Replace `fake_job_postings.csv` with the real filename if yours is different. Training can take a while. When it finishes, it should report that `trustscan_model.joblib` was saved.
-
-If you already have a compatible `trustscan_model.joblib`, you can skip training. If loading fails due to incompatible package versions, retrain using the current environment.
-
-## 5. Run the interactive terminal demo
+## Run Demo
 
 ```bash
 python demo.py
 ```
 
-Enter the job details when prompted. The script prints the model prediction, risk score, triage decision, and available explanation signals.
-
-The displayed categories mean:
-
-- `Publish` — lower model-estimated risk.
-- `Review` — uncertain; manually verify the posting.
-- `Hold` — higher model-estimated risk.
-
-The plain-language prediction labels are mapped from these triage zones. They are not independently verified real/fake labels.
-
-## 6. Run a CSV batch
-
-To score the included example CSV:
+## Batch Prediction
 
 ```bash
-python demo.py --csv sample_new_postings.csv --output predictions.csv
+python predict.py new_postings.csv predictions.csv
 ```
 
-The output file `predictions.csv` will be saved in the current project folder. It contains the posting title, prediction label, risk score, triage zone, and explanation field.
-
-You can also use the original prediction CLI:
+## Run Full Evaluation
 
 ```bash
-python predict.py sample_new_postings.csv predictions.csv
+python run_all.py
 ```
 
-## 7. Optional: run the Streamlit app
+## Output
 
-Streamlit is no longer required for the terminal workflow. If you later want to use `app.py`, install Streamlit separately:
+TrustScan classifies postings into three risk zones:
 
-```bash
-pip install streamlit
-streamlit run app.py
-```
+- **Publish** — lower predicted risk
+- **Review** — uncertain, manual verification recommended
+- **Hold** — higher predicted risk
 
-## 8. Final checklist before presentation
+The predictions are risk estimates and should not be treated as proof that a job posting is genuine or fraudulent.
 
-- [ ] Confirm the real labelled training CSV is present.
-- [ ] Train the model or confirm the compatible model bundle exists.
-- [ ] Run `python demo.py` and test a posting.
-- [ ] Run the CSV batch command and inspect `predictions.csv`.
-- [ ] Use only evaluation metrics generated by your actual experiment.
-- [ ] Explain to your professor that the system screens for risk and requires human verification.
+## Dataset
+
+The project uses the **Employment Scam Aegean Dataset (EMSCAD)** / Fake Job Postings dataset.
+
+## Research Focus
+
+The project evaluates fraud detection using text, metadata, robustness testing, group-aware validation, and human-in-the-loop triage.
